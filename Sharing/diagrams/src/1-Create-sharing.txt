@@ -1,0 +1,51 @@
+title Create sharing
+
+participant Alice as A
+participant Alice's Cozy as AC
+
+A->+A: Select documents to share
+A->AC: Click "share" button
+deactivate A
+
+AC->+A: Launch sharing intent
+A->A: Fill-in details
+note over A
+Alice has to specify:
+* the type of sharing ("master-master/master-slave/one-shot")
+* the recipients
+end note
+
+A->+AC: Submit
+deactivate A
+
+AC->AC: Check type of sharing
+alt Type is "master-master"
+AC->+AC: Find documents already shared\nin "master-master"
+note over AC
+We have to compute the entire list of documents
+to share in order to find all of them that
+are already shared in "master-master" type.
+Indeed if one was to reshare such document, the
+modifications made in one sharing would impact
+the other.
+end note
+
+alt Some documents are already shared in "master-master"
+AC->AC: Cancel sharing
+AC->A: Display notification
+note over AC:
+We display some feedback to explain why the sharing
+was canceled and give the list of incriminated
+documents.
+We can also go back to the selection step while having
+deselected said documents.
+end note
+deactivate AC
+end // alt Some documents are already shared in "master-master"
+end // alt Type is "master-master"
+
+AC->AC: Send sharing request
+note over AC:
+See diagram "2-Sending-sharing-request"
+end note
+deactivate AC

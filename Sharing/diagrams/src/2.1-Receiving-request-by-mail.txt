@@ -1,0 +1,20 @@
+title Receiving a request by mail
+
+participant Bob as B
+participant Bob's Cozy as BC
+
+B->+B: Received sharing request by mail
+note over B:
+In the mail the recipient, Bob, receives there is a field to
+copy-paste in the sharing manager page to start the sharing.
+This field contains all the information required.
+end note
+
+B->B: Open "sharing manager" page on Cozy
+B->B: Copy-paste request
+B->+BC: Submit
+deactivate B
+
+note over BC:
+See diagram "3-Replying-sharing-request"
+end note

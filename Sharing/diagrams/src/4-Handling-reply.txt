@@ -1,0 +1,69 @@
+title Handling reply
+
+participant Alice
+participant Alice's Cozy as AC
+participant Bob's Cozy as BC
+
+BC->+AC: Reply to request
+
+AC->AC: Check pretoken
+
+alt Doesn't match
+note left of AC:
+This situation should not occur and means something
+unexpected happened.
+end note
+AC->+AC: Exit
+deactivate AC
+
+else Match
+AC->+AC: Check for token
+
+alt No token: refusal
+note left of AC:
+If there is no token in the reply then the recipient
+refused the sharing request.
+end note
+AC->AC: Update Bob's access:\nremove sharing entry
+AC->AC: Update sharing document:\nremove Bob from recipients
+AC->AC: Check number of recipients
+
+alt No more recipient
+AC->AC: Delete sharing document
+
+end // alt: no more recipient
+
+AC->Alice: Display notification
+deactivate AC
+
+
+else Token: accept
+note left of AC:
+There is a token in the reply: the recipient accepted
+the sharing request.
+end note
+AC->+AC: Update Bob's access:\nadd token
+
+AC->AC: Remove pretoken from\nsharing document
+AC->Alice: Display notification
+AC->AC: Start replication
+
+note over AC: See diagram "5-New-sharing-dedicated-process"
+deactivate AC
+deactivate AC
+
+
+alt Sharing type is "one-shot"
+note over AC:
+Alice's Cozy waits for an ack from Bob's Cozy. Once
+it has it, it removes the sharing and access documents
+since they are no longer needed.
+end note
+BC->+AC: CouchDB: status OK on replication
+AC->AC: Remove Bob's access document
+AC->AC: Remove sharing document
+deactivate AC
+end // alt Sharing type is "one-shot"
+
+
+end // alt: refusal / accept

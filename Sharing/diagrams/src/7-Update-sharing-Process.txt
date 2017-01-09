@@ -1,0 +1,101 @@
+title Update Sharing process
+
+participant Alice's Cozy as AC
+
+loop Every X seconds
+
+note over AC
+This process is going to be called at a predefinite
+time interval. Its aim is to maintain existent
+sharings by propagating updates, deletions and additions.
+end note
+
+AC->AC: Get "one-shot" sharings
+
+loop For each one-shot sharing
+AC->AC: Try to get all documents specified\nin sharing
+
+alt No miss: all documents exist
+AC->AC: Remove corresponding recipient's access
+AC->AC: Remove sharing document
+end // alt No miss: all documents exist
+end // loop For each one-shot sharing
+
+AC->AC: Gather active filters on a per database basis
+note over AC:
+We take all the remaining sharings and store
+their filters, in order to use them later.
+/!\\ This step can be optimized. /!\\
+end note
+
+loop Every database where sharings may apply
+AC->+AC: GET /db/_changes since {lastCheck}
+note over AC:
+We fetch the changes feed of the current database
+that occured between now and the last time the
+process checked.
+We obtain a list of documents: {ChangedDocuments}.
+end note
+
+
+AC->AC: Apply filters
+note over AC:
+We apply the filters for all the active sharings on that
+database (which means we don't apply all the filters, only
+those relevant).
+We end up with a list {ToShare} which contains:
+* documents IDs
+* their shareID
+* an indicator to tell if it's an update, an addition or
+a deletion
+end note
+
+AC->AC: Compare remaining documents
+note over AC:
+We compare the list of remaining documents:
+{RemainingDocuments} = {ChangedDocuments} - {ToShare}
+with the list of {SharedDocuments}.
+The aim of this comparison is to determine if some documents
+were removed from a sharing.
+We also update {ToShare} with the documents we have to
+delete.
+end note
+
+AC->AC: Update {SharedDocuments} list
+note over AC:
+This list keeps track of all the documents that are
+shared in this database.
+We add new entries and remove the documents no longer
+shared thanks to the {ToShare} list.
+We update the {ToShare} list and specify which documents
+are updated, which are created.
+end note
+
+loop For each updated document
+AC->AC: Check for conflicts (see dedicated\ndiagram)
+end // loop "for each updated document"
+
+AC->AC: Compute the replication documents to\nPOST in _replicator
+note over AC:
+For that we need the access documents of the recipients
+which we obtain thanks to the shareID.
+The document will look like:
+
+{
+\ \ "source": "data/io.cozy.db",
+\ \ "target": {
+\ \ \ \ "url": "https://recipient.tld/data/io.cozy.db",
+\ \ \ \ "oauth": {
+\ \ \ \ \ \ "consumer_key":"recipient@cozymail.cc",
+\ \ \ \ \ \ "consumer_secret":"sharingid",
+\ \ \ \ \ \ "token":"strongtoken",
+\ \ \ \ \ \ "token_secret":"st®ong"
+\ \ \ \ }
+\ \ },
+\ \ "doc_ids": ["id1", "id2"]
+}
+end note
+
+end // loop "Every database where sharings exist"
+
+end // loop "Every X seconds"

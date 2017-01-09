@@ -1,0 +1,62 @@
+title New sharing dedicated process
+
+participant Alice's Cozy as AC
+participant Recipient's Cozy as BC
+
+AC->+AC: New sharing
+
+AC->AC: Get sharing metadata
+note over AC:
+* sharing id
+* filter
+* type
+* list of documents ids
+* recipients and their tokens
+end note
+
+loop For each recipient
+AC->AC: Generate document to POST in\n_replicator
+note over AC:
+The document will look like                                                      .
+
+{
+\ \ "source": "data/io.cozy.contacts",
+\ \ "target": {
+\ \ \ \ "url":"https://bob.tld/sharing/replication/data/io.cozy.contacts",
+\ \ \ \ "oauth": {
+\ \ \ \ \ \ "consumer_key":"alice@cozymail.cc",
+\ \ \ \ \ \ "consumer_secret":"sharingid",
+\ \ \ \ \ \ "token":"thesuperstrongtoken",
+\ \ \ \ \ \ "token_secret":"somest®ongsecret"
+\ \ \ \ }
+\ \ },
+\ \ "doc_ids": ["id1", "id2", "id3"]
+}
+end note
+
+AC->AC: POST document to\n_replicator database
+note over AC: Replicator will handle the replication
+
+
+loop For each document
+AC->AC: Check for binary
+
+alt Has a binary
+AC->AC: Attach binary information 
+note over AC:
+We attach the following information so that the
+recipient can presume the binary to be legit even
+if it arrives before:
+* sharing id
+* linked document id
+* MD5
+* size
+The binary will be sent to the url:
+https://bob.tld/sharing/binary/database/id-binary
+end note
+AC->BC: Send binary
+end // alt Has a binary
+
+end // loop For each document
+deactivate AC
+end // loop for each recipient

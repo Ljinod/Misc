@@ -1,0 +1,88 @@
+title Replying to a sharing request
+
+participant Alice's Cozy as AC
+participant Bob's Cozy as BC
+participant Bob
+
+AC->+BC: Sharing request
+
+BC->BC: Create sharing\ndocument
+note over BC:
+* id (equal to the sharing id)
+* date of creation
+* last update
+* originator
+* recipients
+* type
+* pretoken
+end note
+
+BC->Bob: Accept sharing?
+deactivate BC
+
+
+alt Accepting
+
+Bob->+BC: Yes
+
+BC->BC: Generate token
+note over BC:
+Bob's Cozy generates a token that Alice's Cozy
+will have to use in order to authenticate further actions
+(sending documents, updates, etc…).
+end note
+
+BC->BC: Check if Alice has an access
+
+alt Alice doesn't have an access
+
+BC->BC: Check if Alice has a contact
+
+alt Alice doesn't have a contact
+BC->BC: Create a contact
+end // alt: Alice doesn't have a contact
+
+BC->BC: Create Alice's access
+note over BC:
+* URL
+* public name
+* contact id
+* initialize sharings list: [{id, filter, token}]
+end note
+
+
+else Alice already has an access
+BC->BC: Update Alice's access
+note over BC:
+Add the information relative to this sharing in
+the sharings list: {id, filter, token}.
+end note
+
+end // alt: Alice doesn't have an access
+
+BC->BC: Generate\naccept
+note over BC:
+Request contains:
+* pretoken
+* token
+end note
+
+
+else Refusing
+Bob->+BC: No
+
+BC->BC: Delete sharing document
+
+BC->BC: Generate\nrefusal
+note over BC:
+Request contains:
+* pretoken
+end note
+
+end // alt: accepting / refusing
+
+BC->AC: Reply to request
+note over AC: see diagram "4-Handling-reply"
+
+deactivate BC
+deactivate BC

@@ -1,0 +1,51 @@
+title Receiving binary
+
+participant Alice's Cozy as AC
+participant Recipient's Cozy as BC
+
+note over AC:
+Alice will send the binary to the recipient
+on a dedicated route, only used to send binary
+in the context of sharing.
+end note
+
+AC->BC: Send binary
+
+note over BC:
+The recipient will compare the url/token/sharing id
+with the corresponding access document
+end note
+BC->+BC: Authenticate
+
+alt Authentication successful
+BC->+BC: Check if document describing\nbinary was received
+
+alt Document received
+
+BC->BC: Verify checksum/size
+
+alt Checksum/size match
+
+BC->BC: Write document in database
+BC->BC: Write binary in database
+deactivate BC
+
+else Checksum/size don't match and binary was sent less than N times
+
+BC->+BC: Increase counter
+BC->AC: Ask to resend binary
+deactivate BC
+
+end // alt Checksum/size match else Checksum/size don't match
+
+else Document not received
+
+BC->+BC: Store binary in\n"temporary sharing" database
+deactivate BC
+
+end
+
+else Authentication failed
+BC->BC: Abort
+end // alt Authentication successful else Authentication failed
+deactivate BC

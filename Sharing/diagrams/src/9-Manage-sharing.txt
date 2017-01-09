@@ -1,0 +1,88 @@
+title Manage sharing interface
+
+participant Alice as A
+participant Alice's Cozy as AC
+participant Recipient's Cozy as BC
+
+note over Alice:
+One can manage one's sharing through a dedicated
+interface on one's Cozy.
+There one can:
+* Delete a sharing;
+* Update the recipients of a sharing under one's
+control.
+end note
+
+A->AC: Goto Manage sharing
+AC->A: Display list of sharings
+A->AC: Select sharing
+
+AC->A: Display sharing details
+
+note left of AC:
+There is only one situation where Alice can do more than
+just deleting a sharing: if its type is "Master-Slave" and
+Alice owns it.
+end note
+
+alt Delete sharing
+A->+AC: Delete sharing
+
+loop For each recipient
+AC->AC: Get recipient's access document
+AC->AC: Delete corresponding sharing entry
+AC->BC: Send notification
+end // loop For each participant
+
+loop For each shared document
+AC->AC: Check if document is still shared\nin another sharing
+alt Document is no longer shared
+AC->AC: Remove "shared" tag from document
+end // alt
+end // loop For each shared document
+
+AC->AC: Delete sharing document
+deactivate AC
+
+else Alice is the owner of the sharing and the sharing is of type "master-slave"
+
+
+alt Add recipient
+A->AC: Add recipients
+AC->+A: Show add recipients form
+A->A: Fill-in form
+A->+AC: Submit
+deactivate A
+
+loop For each recipient to add
+AC->AC: Send request
+note over AC: see "2-Sending-sharing-request"
+end // loop For each recipient to add
+deactivate AC
+
+else Remove recipients
+
+A->+A: Select recipients to remove
+A->+AC: Submit
+deactivate A
+
+loop For each recipient
+AC->AC: Get recipient's access document
+AC->AC: Delete corresponding sharing entry
+AC->BC: Send notification
+end // loop For each recipient
+
+AC->AC: Check if there is still at least\none recipient
+alt There is no recipient
+loop For each shared document
+AC->AC: Check if document is still shared\nin another sharing
+alt Document is no longer shared
+AC->AC: Remove "shared" tag from document
+end // alt Document is no longer shared
+end // loop For each shared document
+AC->AC: Delete sharing document
+end // alt There is no recipient
+deactivate AC
+
+end // alt Add recipient else Remove recipient
+end // alt Delete sharing else Alice is the owner…

@@ -1,0 +1,69 @@
+title Receiving replication
+
+participant Alice's Cozy as AC
+participant Recipient's Cozy as BC
+
+note over AC:
+Once the documents are written in the _replicator
+database CouchDB will start its replication process.
+We specified a custom route instead of the target
+database so that we can intercept all the requests
+and verify them.
+end note
+AC->+BC: Send document by replication
+
+BC->BC: Check credentials
+note over BC:
+We check the sharing id, the url of Alice, the token
+and the document(s) present in the request to see if
+they match an access document. In particular we check
+that each document passes the filter associated to its
+sharing.
+end note
+
+alt Authentication unsuccessful
+BC->+BC: Abort
+note over BC:
+The combination of document(s)/sharing id/url/token
+doesn't match: we abort.
+We could set a blacklist as well.
+end note
+deactivate BC
+
+else Authentication successful
+
+loop For each document
+BC->BC: Check if document points\nto a binary
+
+alt Document doesn't point to a binary
+BC->BC: Write document to database
+
+else Document points to a binary and binary was sent less than N times
+note right of BC:
+See diagram "6.1-Receiving-binary" as well
+end note
+BC->BC: Check if binary was received
+
+alt Binary was received
+
+BC->+BC: Check if checksum/size match
+alt Checksum/size don't match
+BC->+BC: Increase counter
+BC->AC: Ask to resend binary
+deactivate BC
+
+else Checksum/size match
+BC->BC: Write document to database
+BC->BC: "Write binary"
+
+deactivate BC
+end // alt Checksum/size don't match
+
+else Binary was not received
+
+BC->BC: Store document in\n"temporary sharing" database
+deactivate BC
+end // alt Binary was received else Binary was not received
+end // alt Document doesn't point to a binary
+end // loop For each document
+end // alt Authentication unsuccessful else Authentication success

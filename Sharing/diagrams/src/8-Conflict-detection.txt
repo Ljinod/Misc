@@ -1,0 +1,58 @@
+title Conflict detection
+
+participant Alice's Cozy as AC
+
+note over AC:
+This part is started every time the "Update sharing process"
+has computed the list of updated documents to share.
+
+Hence as input we have a shared document that has been updated.
+end note
+
+AC->+AC: GET /{db}/{documentID}?conflicts=true
+note over AC:
+With this we get the entire document as well as a `_conflicts`
+key listing the conflicting revisions.
+end note
+
+AC->AC: Check for `_conflicts` existence
+
+alt `_conflicts` exists
+
+AC->AC: Store winning revision
+note over AC:
+We keep the winning revision in order to use it
+later: {winning_rev}.
+end note
+
+AC->AC: GET /{db}/{documentID}?open_revs=all
+note over AC:
+We get an array of the conflicting documents, including
+their bodies.
+end note
+
+loop For each conflicting revison
+AC->AC: Create copy of loosing revision
+note over AC:
+The newly created document will be an exact replica of
+the loosing revision except for:
+* its id: Couch will generate a new one;
+* its name: we will append "_CONFLICT-timestamp" to it.
+end note
+
+AC->AC: DELETE /{db}/{documentID}?rev={loosing_rev}
+note over AC:
+To avoid conflicts from resurfacing we delete the
+loosing revisions from the history of the document.
+end note
+
+end // loop: "For each conflicting revision"
+
+AC->AC: return the newly created documents
+
+
+else `_conflicts` does not exist
+
+AC->AC: exit
+
+end // alt "`_conflicts` exists/does not exist"
