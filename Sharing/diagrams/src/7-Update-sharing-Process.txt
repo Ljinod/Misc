@@ -72,28 +72,21 @@ are updated, which are created.
 end note
 
 loop For each updated document
-AC->AC: Check for conflicts (see dedicated\ndiagram)
+AC->AC: Check for conflicts
+note over AC:
+See diagram "8-Conflict-detection"
+end note
 end // loop "for each updated document"
 
 AC->AC: Compute the replication documents to\nPOST in _replicator
 note over AC:
 For that we need the access documents of the recipients
 which we obtain thanks to the shareID.
-The document will look like:
-
-{
-\ \ "source": "data/io.cozy.db",
-\ \ "target": {
-\ \ \ \ "url": "https://recipient.tld/data/io.cozy.db",
-\ \ \ \ "oauth": {
-\ \ \ \ \ \ "consumer_key":"recipient@cozymail.cc",
-\ \ \ \ \ \ "consumer_secret":"sharingid",
-\ \ \ \ \ \ "token":"strongtoken",
-\ \ \ \ \ \ "token_secret":"st®ong"
-\ \ \ \ }
-\ \ },
-\ \ "doc_ids": ["id1", "id2"]
-}
+The document will contain:
+* source
+* target
+* target's token (oauth2?)
+* doc ids
 end note
 
 end // loop "Every database where sharings exist"
