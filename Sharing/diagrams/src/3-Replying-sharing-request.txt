@@ -6,13 +6,14 @@ participant Bob
 
 AC->+BC: Sharing request
 
-BC->BC: Create sharing\ndocument
+BC->BC: Create temporary sharing\ndocument
 note over BC:
 * id (equal to the sharing id)
-* date of creation
-* last update
-* originator
-* recipients
+* sharer = Alice
+* recipients (empty if type is not "master-master")
+* filter
+* list of ids of shared documents
+* description
 * type
 * pretoken
 end note
@@ -65,6 +66,7 @@ note over BC:
 Request contains:
 * pretoken
 * token
+* accept = True
 end note
 
 
@@ -77,6 +79,7 @@ BC->BC: Generate\nrefusal
 note over BC:
 Request contains:
 * pretoken
+* accept = False
 end note
 
 end // alt: accepting / refusing
