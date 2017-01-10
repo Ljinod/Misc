@@ -17,13 +17,9 @@ AC->+AC: Exit
 deactivate AC
 
 else Match
-AC->+AC: Check for token
+AC->+AC: Check for "accept" field
 
-alt No token: refusal
-note left of AC:
-If there is no token in the reply then the recipient
-refused the sharing request.
-end note
+alt Accept = False
 AC->AC: Update Bob's access:\nremove sharing entry
 AC->AC: Update sharing document:\nremove Bob from recipients
 AC->AC: Check number of recipients
@@ -37,11 +33,7 @@ AC->Alice: Display notification
 deactivate AC
 
 
-else Token: accept
-note left of AC:
-There is a token in the reply: the recipient accepted
-the sharing request.
-end note
+else Accept = True
 AC->+AC: Update Bob's access:\nadd token
 
 AC->AC: Remove pretoken from\nsharing document
@@ -49,7 +41,6 @@ AC->Alice: Display notification
 AC->AC: Start replication
 
 note over AC: See diagram "5-New-sharing-dedicated-process"
-deactivate AC
 deactivate AC
 
 
@@ -67,3 +58,4 @@ end // alt Sharing type is "one-shot"
 
 
 end // alt: refusal / accept
+deactivate AC
