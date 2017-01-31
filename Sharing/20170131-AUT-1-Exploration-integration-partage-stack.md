@@ -35,9 +35,9 @@ An array of the recipients and, for each of them, the status of the sharing. The
 
 `type` is the type of sharing. It should be one of the followings: `MASTER-MASTER`, `MASTER-SLAVE`, `ONE-SHOT`.  
 They represent the access rights the recipient and sender have:
-    * `MASTER-MASTER`: both recipient and sender can modify the documents and have their modifications pushed to the other.
-    * `MASTER-SLAVE`: only the sender can push modifications to the recipient. The recipient can modify localy the documents.
-    * `ONE-SHOT`: the documents are duplicated and no modifications are pushed.
+* `MASTER-MASTER`: both recipient and sender can modify the documents and have their modifications pushed to the other.
+* `MASTER-SLAVE`: only the sender can push modifications to the recipient. The recipient can modify localy the documents.
+* `ONE-SHOT`: the documents are duplicated and no modifications are pushed.
 
 #### Description
 
