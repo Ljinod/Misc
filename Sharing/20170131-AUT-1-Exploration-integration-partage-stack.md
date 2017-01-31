@@ -8,17 +8,25 @@ A sharing document will look like:
 
 ```json
     {
-        "documents": ["id1", "id2", "id3"],
+        "owner": true,
+        "documents": [
+            {"doctype":"io.cozy.doctype1", "ids":["id1", "id2"]},
+            {"doctype":"io.cozy.doctype2", "ids":["id3"]}
+        ],
         "recipients": [
             {"id":"url.cozy1", "status":"pending"},
-            {"id":"url.cozy2", "status":"pending"}
+            {"id":"url.cozy3", "status":"accepted", "token":"bépoèvdljzw"}
         ],
-        "type": "ONE-SHOT",
+        "type": "one-shot",
         "description": "Give it to me baby!"
     }
 ```
 
 - [ ] Est-ce qu'on rajoute des meta-données ? Date de création ? Date de dernière mise-à-jour ?
+
+#### Owner
+
+To tell if the owner of the Cozy is also the owner of the sharing. This field is set automatically by the stack when creating (`true`) or receiving (`false`) one.
 
 #### Documents
 
@@ -26,18 +34,19 @@ Which documents will be shared. We provide their identifiants, a more dynamic so
 
 #### Recipients
 
-An array of the recipients and, for each of them, the status of the sharing. The possible values for the sharing are:
+An array of the recipients and, for each of them, the status of the sharing as well as their token of authentification if they have accepted said sharing.  
+The possible values for the status are:
 * `pending`: the recipient didn't reply yet.
 * `accepted`: the recipient accepted.
 * `refused`: the recipient refused.
 
 #### Type
 
-`type` is the type of sharing. It should be one of the followings: `MASTER-MASTER`, `MASTER-SLAVE`, `ONE-SHOT`.  
+The type of sharing. It should be one of the followings: `master-master`, `master-slave`, `one-shot`.  
 They represent the access rights the recipient and sender have:
-* `MASTER-MASTER`: both recipient and sender can modify the documents and have their modifications pushed to the other.
-* `MASTER-SLAVE`: only the sender can push modifications to the recipient. The recipient can modify localy the documents.
-* `ONE-SHOT`: the documents are duplicated and no modifications are pushed.
+* `master-master`: both recipient and sender can modify the documents and have their modifications pushed to the other.
+* `master-slave`: only the sender can push modifications to the recipient. The recipient can modify localy the documents.
+* `one-shot`: the documents are duplicated and no modifications are pushed.
 
 #### Description
 
@@ -65,8 +74,11 @@ The recipient will need to give access rights to the sender. We will use the per
     }
 ```
 
-- [ ] Est-ce qu'il faut aussi créer une permission chez l'émetteur ? Pour que la stack autorise la réplication.
-- [ ] Est-ce qu'on doit instaurer une gestion fine des verbes http en fonction du type du partage ? Par exemple un partage de type `ONE-SHOT` n'aura pas besoin de `PATCH`.
+- [x] Est-ce qu'il faut aussi créer une permission chez l'émetteur ? Pour que la stack autorise la réplication.
+    - Seulement dans le cas d'un partage de type `master-master`.
+- [ ] Est-ce qu'on doit instaurer une gestion fine des verbes http en fonction du type du partage ? Par exemple un partage de type `one-shot` n'aura pas besoin de `PATCH`.
+    - On pourrait limiter les verbes à seulement `GET` et `POST` dans le cadre des partages `master-slave` et `one-shot`, si CouchDB ne fait effectivement pas appel à `PUT`.
+    - [ ] En discuter avec Romain pour confirmer.
 - [ ] Que fait-on du verbe `DELETE` ?
 - [ ] Explorer OAuth pour savoir exactement ce qui doit être mis dans ce document, comment on peut l'utiliser.
 
@@ -104,11 +116,11 @@ The declaration of the routes and their chaining.
 
 Create a new sharing.
 
-### POST /sharings/request/:id
+### PUT /sharings/:id
 
 Receive a sharing request.
 
-### POST /sharings/answer/:id
+### POST /sharings/:id/answer
 
 Answer a sharing request.
 
@@ -116,6 +128,6 @@ Answer a sharing request.
 
 Delete the specified sharing (both the sharing document and the associated permission).
 
-### POST /sharings/replicate/:id
+### POST /sharings/:id/replicate
 
 Start the replication (create the correct document in _\_replicator_) for the specified sharing.
