@@ -34,6 +34,8 @@ Le mobile utilise cependant la réplication en « lecture » :
 
 > 14:21:40        @N` | je crois qu'ils font de la réplication juste en lecture
 
+D'après ce que je comprends de leur code ils veulent utiliser la réplication pour le mode hors-ligne (tout le code est [ici](https://github.com/cozy/cozy-client-js/blob/14cf68ce2c0ab7508da90a3cfd74cfda3ea7194c/src/offline.js)).
+
 
 ### Desktop
 
