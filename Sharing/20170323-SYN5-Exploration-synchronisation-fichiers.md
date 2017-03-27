@@ -21,7 +21,7 @@ Dans le cadre d'un partage de fichiers "one-shot" en lecture seule.
 
 ---
 
-# Réflexions
+# Réflexions : comment partager un fichier ?
 
 ## Discussions avec les différents équipes
 
@@ -34,7 +34,7 @@ Le mobile utilise cependant la réplication en « lecture » :
 
 > 14:21:40        @N` | je crois qu'ils font de la réplication juste en lecture
 
-D'après ce que je comprends de leur code ils veulent utiliser la réplication pour le mode hors-ligne (tout le code est [ici](https://github.com/cozy/cozy-client-js/blob/14cf68ce2c0ab7508da90a3cfd74cfda3ea7194c/src/offline.js)).
+D'après ce que je comprends de leur code ils veulent utiliser la réplication pour le mode hors-ligne (tout le code est [ici](https://github.com/cozy/cozy-client-js/blob/14cf68ce2c0ab7508da90a3cfd74cfda3ea7194c/src/offline.js)) et uniquement pour faire des réplications de CouchDB (Gozy) vers PouchDB.
 
 
 ### Desktop
