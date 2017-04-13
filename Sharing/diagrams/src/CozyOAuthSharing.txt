@@ -1,0 +1,81 @@
+title Cozy + OAuth + Sharing
+
+participant Alice as A
+participant Alice's Cozy as AC
+participant Bob's Cozy as BC
+participant Bob as B
+
+A->+AC: Share document 123 with Bob
+note over AC
+Alice's Cozy asks Bob's Cozy to create an 
+OAuth Client for this sharing.
+The following information are required:
+- redirect_uris
+- client_name
+- software_id
+- client_kind (optional)
+- client_uri (optional)
+- logo_uri (optional)
+- policy_uri (optional)
+- software_version (optional)
+end note
+AC->+BC: POST /auth/register
+deactivate AC
+
+BC->BC: Create OAuth Client
+note over BC
+The OAuth Client will be persisted in CouchDB.
+The regitration_access_token is not persisted.
+Doctype: io.cozy.oauth.clients
+end note
+BC->AC: Send credentials:\nClientID + ClientSecret + registration_acces_token
+deactivate BC
+
+
+note over AC
+The client's credentials will be persisted in the
+Sharing document.
+
+Alice's Cozy can now ask for the permission to create
+the document 123 on Bob's Cozy.
+To do so it gives:
+- client_id
+- redirect_uri
+- state
+- response_type = code
+- scope
+
+In the form of a link inside an e-mail that
+it will send to Bob.
+end note
+AC->+B: Send e-mail
+
+note over B
+If Bob is interested he will click on the link or
+copy/paste it on a dedicated page of his Cozy.
+end note
+B->+BC: Open link
+deactivate B
+BC->BC: Ask for permission\nGET /auth/authorize
+
+BC->B: Display permissons asked
+deactivate BC
+
+note over Bob
+Nothing happens until Bob accepts or refuses
+to give the permissions to Alice.
+If he refuses then everything stops there.
+If he accepts it continues on to the next step.
+end note
+B->+BC: Accepts\nPOST /auth/authorize
+BC->BC:Generate the permissions
+BC->+AC: Redirect to give Alice's Cozy the credentials\nfor the permissions
+deactivate BC
+AC->AC: Extract credentials
+note over AC
+The credentials will also be persisted in the
+sharing document.
+end note
+
+AC->BC: Redirect once again to send Bob back to his Cozy.
+deactivate AC
