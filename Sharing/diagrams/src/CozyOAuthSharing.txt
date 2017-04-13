@@ -69,12 +69,24 @@ If he accepts it continues on to the next step.
 end note
 B->+BC: Accepts\nPOST /auth/authorize
 BC->BC:Generate the permissions
-BC->+AC: Redirect to give Alice's Cozy the credentials\nfor the permissions
+BC->+AC: Redirect Bob to Alice's Cozy to give her Cozy\nthe access_code for the permissions
 deactivate BC
-AC->AC: Extract credentials
+AC->AC: Extract access_code
+note over AC:
+The access_code cannot be used as is and must be
+exchanged for a pair of tokens (access and refresh).
+Alice's Cozy has to provide:
+- grant_type
+- code
+- client_id
+- client_secret
+end note
+AC->+BC: Exchange access_code\nPOST /auth/access_token
+deactivate AC
+BC->+AC: access_token, refresh_token
+deactivate BC
 note over AC
-The credentials will also be persisted in the
-sharing document.
+The tokens will be persisted in the sharing document.
 end note
 
 AC->BC: Redirect once again to send Bob back to his Cozy.
