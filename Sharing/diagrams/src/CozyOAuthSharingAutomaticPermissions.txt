@@ -108,7 +108,7 @@ AC->AC: Update sharing document:\npersist tokens.
 
 alt Master-Master
 AC->+AC: Generate Bob's access_code.
-AC->+BC: Redirection to give Bob his access_code.
+AC->+BC: Give Bob's Cozy the access_code:\nPOST redirect_uri
 deactivate AC
 BC->+AC: Exchange access_code for tokens\nPOST /auth/access_token
 deactivate BC
