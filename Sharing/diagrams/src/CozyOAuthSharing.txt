@@ -56,6 +56,7 @@ copy/paste it on a dedicated page of his Cozy.
 end note
 B->+BC: Open link
 deactivate B
+BC->BC: Persist sharing document
 BC->BC: Ask for permission\nGET /auth/authorize
 
 BC->B: Display permissons asked

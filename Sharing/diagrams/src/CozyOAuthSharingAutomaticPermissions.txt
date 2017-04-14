@@ -60,7 +60,6 @@ deactivate B
 BC->BC: Persist sharing document
 
 
-BC->BC: Check sharing type
 alt Master-Master
 BC->+AC: POST /auth/register
 AC->AC: Create OAuth Client
@@ -103,7 +102,7 @@ end note
 
 
 alt Master-Master
-AC->AC: Generate permissions for Bob\nPOST /auth/authorize
+AC->AC: Launch "permission" worker
 
 end
 AC->+BC: Exchange access_code\nPOST /auth/access_token
@@ -116,3 +115,17 @@ end note
 
 AC->BC: Redirect once again to send Bob back to his Cozy.
 deactivate AC
+
+alt "Permission" worker
+
+AC->+AC: Generate permissions\nPOST /auth/authorize
+AC->+BC: Redirection to give Bob his access_code
+deactivate AC
+BC->+AC: Exchange access_code for tokens\nPOST /auth/access_token
+deactivate BC
+AC->+BC: access_token, refresh_token
+deactivate AC
+BC->BC: Persist tokens in the sharing document.
+deactivate BC
+
+end
