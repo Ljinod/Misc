@@ -24,14 +24,6 @@ RECIPIENT_JSON='
 {
 	"email": "julien@cozycloud.cc",
 	"url": "url.bidon.fr",
-	"client": {
-		"client_id": "1234BEPO",
-		"redirect_uris": [
-			"redirect.url.fr/sharings/answer"
-		],
-		"client_name": "toto",
-		"software_id": "toto.test.0"
-	}
 }
 '
 

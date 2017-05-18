@@ -8,14 +8,14 @@
 if [ $# -gt 0 ]; then
 	export COZY_STACK_DOMAIN="$1"
 else
-	export COZY_STACK_DOMAIN="localhost:8080"
+	export COZY_STACK_DOMAIN="cozy1.local:8080"
 fi
 
 COZY_CLIENT_ID=$(cozy-stack instances client-oauth "$COZY_STACK_DOMAIN" \
-	http://localhost/ test-recipient github.com/cozy/test)
+	http://$COZY_STACK_DOMAIN cli-test github.com/cozy/test)
 
 export COZY_STACK_TOKEN=$(cozy-stack instances token-oauth \
-	"$COZY_STACK_DOMAIN" "$COZY_CLIENT_ID" io.cozy.recipients)
+	"$COZY_STACK_DOMAIN" "$COZY_CLIENT_ID" io.cozy.photos)
 
 if [ -z "$COZY_STACK_TOKEN" ]; then
 	echo "[ERROR]\t The token could not be generated."
